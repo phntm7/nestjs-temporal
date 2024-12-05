@@ -39,13 +39,17 @@ let TemporalExplorer = TemporalExplorer_1 = class TemporalExplorer {
     }
     onModuleDestroy() {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            if (this.worker && (this.worker.getState() === 'INITIALIZED' || this.worker.getState() === 'RUNNING')) {
+                this.worker.shutdown();
+            }
             try {
-                (_a = this.worker) === null || _a === void 0 ? void 0 : _a.shutdown();
                 yield this.workerRunPromise;
             }
             catch (err) {
-                this.logger.warn('Temporal worker was not cleanly shutdown.', { err });
+                this.logger.warn('Temporal worker was not cleanly shutdown.', {
+                    err: err instanceof Error ? err.message : err,
+                    stack: err instanceof Error ? err.stack : undefined,
+                });
             }
         });
     }
