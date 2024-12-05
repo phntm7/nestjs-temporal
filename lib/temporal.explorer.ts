@@ -42,12 +42,32 @@ export class TemporalExplorer
   }
 
   async onModuleDestroy() {
+    // Workers automatically listen for an overlapping but distinct set of
+    // signals to NestJS (notably, SIGTERM and SIGINT), and will start shutting
+    // down when they're received.
+    //
+    // Unfortunately, the .shutdown() method isn't idempotent, and will throw
+    // errors if called on a worker that's already in the process of shutting
+    // down.
+    //
+    // Since it's possible for NestJS to exit with app.close(), which would
+    // *not* trigger workers to automatically shut down, we need to check the
+    // worker's state and only call .shutdown() if it's still running.
+    //
+    // This is racy (e.g. a signal could be received just after the check and
+    // before the shutdown), but the race is pretty long, so I think it's fine.
+    if (this.worker && (this.worker.getState() === 'INITIALIZED' || this.worker.getState() === 'RUNNING')) {
+      this.worker.shutdown();
+    }
+
     try {
-      this.worker?.shutdown();
       await this.workerRunPromise;
 
     } catch (err: any) {
-      this.logger.warn('Temporal worker was not cleanly shutdown.', { err });
+      this.logger.warn('Temporal worker was not cleanly shutdown.', {
+        err: err instanceof Error ? err.message : err,
+        stack: err instanceof Error ? err.stack : undefined,
+      });
     }
   }
 
