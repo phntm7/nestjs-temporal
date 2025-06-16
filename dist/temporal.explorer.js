@@ -108,19 +108,36 @@ let TemporalExplorer = TemporalExplorer_1 = class TemporalExplorer {
                     : wrapper.metatype) &&
                     (!activityClasses || activityClasses.includes(wrapper.metatype));
             });
-            activities.forEach((wrapper) => {
+            const activitiesLoader = activities.flatMap((wrapper) => {
                 const { instance } = wrapper;
                 const isRequestScoped = !wrapper.isDependencyTreeStatic();
-                this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (key) => __awaiter(this, void 0, void 0, function* () {
+                return this.metadataScanner.scanFromPrototype(instance, Object.getPrototypeOf(instance), (key) => __awaiter(this, void 0, void 0, function* () {
                     if (this.metadataAccessor.isActivity(instance[key])) {
+                        const metadata = this.metadataAccessor.getActivity(instance[key]);
+                        let activityName = key;
+                        if (metadata === null || metadata === void 0 ? void 0 : metadata.name) {
+                            if (typeof metadata.name === 'string') {
+                                activityName = metadata.name;
+                            }
+                            else {
+                                const activityNameResult = metadata.name(instance);
+                                if (typeof activityNameResult === 'string') {
+                                    activityName = activityNameResult;
+                                }
+                                else {
+                                    activityName = yield activityNameResult;
+                                }
+                            }
+                        }
                         if (isRequestScoped) {
                         }
                         else {
-                            activitiesMethod[key] = instance[key].bind(instance);
+                            activitiesMethod[activityName] = instance[key].bind(instance);
                         }
                     }
                 }));
             });
+            yield Promise.all(activitiesLoader);
             return activitiesMethod;
         });
     }

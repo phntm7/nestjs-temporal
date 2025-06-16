@@ -1,7 +1,7 @@
 import { Scope } from '@nestjs/common';
 import { ActivityOptions } from '@temporalio/workflow';
 export interface ActivitiesOptions extends ActivityOptions {
-    name?: string;
+    name?: string | ((instance: any) => string | Promise<string>);
     scope?: Scope;
 }
 export declare function Activities(): ClassDecorator;

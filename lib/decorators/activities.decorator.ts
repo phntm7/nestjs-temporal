@@ -8,7 +8,7 @@ export interface ActivitiesOptions extends ActivityOptions {
   /**
    * Specifies the name of the queue to subscribe to.
    */
-  name?: string;
+  name?: string | ((instance: any) => string | Promise<string>);
   /**
    * Specifies the lifetime of an injected Activities.
    */

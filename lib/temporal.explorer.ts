@@ -21,6 +21,7 @@ import {
   TemporalModuleOptions,
 } from './temporal.module-definition';
 import { TemporalMetadataAccessor } from './temporal-metadata.accessors';
+import { ActivityOptions } from './decorators';
 
 @Injectable()
 export class TemporalExplorer
@@ -141,25 +142,41 @@ export class TemporalExplorer
           (!activityClasses || activityClasses.includes(wrapper.metatype)),
       );
 
-    activities.forEach((wrapper: InstanceWrapper) => {
+      const activitiesLoader = activities.flatMap((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
       const isRequestScoped = !wrapper.isDependencyTreeStatic();
 
-      this.metadataScanner.scanFromPrototype(
+      return this.metadataScanner.scanFromPrototype(
         instance,
         Object.getPrototypeOf(instance),
         async (key: string) => {
           if (this.metadataAccessor.isActivity(instance[key])) {
+            const metadata = this.metadataAccessor.getActivity(instance[key]) as ActivityOptions;
+
+            let activityName = key;
+            if (metadata?.name) {
+              if (typeof metadata.name === 'string') {
+                activityName = metadata.name;
+              } else {
+                // @ts-expect-error - metadata.name can be a function
+                const activityNameResult = metadata.name(instance);
+                if (typeof activityNameResult === 'string') {
+                  activityName = activityNameResult;
+                } else {
+                  activityName = await activityNameResult;
+                }
+              }
+            }
             if (isRequestScoped) {
               // TODO: handle request scoped
             } else {
-              activitiesMethod[key] = instance[key].bind(instance);
-            }
+              activitiesMethod[activityName] = instance[key].bind(instance);            }
           }
         },
       );
     });
 
+    await Promise.all(activitiesLoader);
     return activitiesMethod;
   }
 }
