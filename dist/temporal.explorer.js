@@ -26,6 +26,9 @@ const worker_1 = require("@temporalio/worker");
 const temporal_module_definition_1 = require("./temporal.module-definition");
 const temporal_metadata_accessors_1 = require("./temporal-metadata.accessors");
 let TemporalExplorer = TemporalExplorer_1 = class TemporalExplorer {
+    get worker() {
+        return this._worker;
+    }
     constructor(discoveryService, metadataAccessor, metadataScanner) {
         this.discoveryService = discoveryService;
         this.metadataAccessor = metadataAccessor;
@@ -76,7 +79,7 @@ let TemporalExplorer = TemporalExplorer_1 = class TemporalExplorer {
                     workerOptions.connection = yield worker_1.NativeConnection.connect(connectionOptions);
                 }
                 this.logger.verbose('Creating a new Worker');
-                this.worker = yield worker_1.Worker.create(Object.assign(workerOptions, workerConfig));
+                this._worker = yield worker_1.Worker.create(Object.assign(workerOptions, workerConfig));
             }
         });
     }

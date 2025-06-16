@@ -1,6 +1,6 @@
 import { OnApplicationBootstrap, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
-import { NativeConnectionOptions, RuntimeOptions, WorkerOptions } from '@temporalio/worker';
+import { NativeConnectionOptions, RuntimeOptions, Worker, WorkerOptions } from '@temporalio/worker';
 import { TemporalMetadataAccessor } from './temporal-metadata.accessors';
 export declare class TemporalExplorer implements OnModuleInit, OnModuleDestroy, OnApplicationBootstrap {
     private readonly discoveryService;
@@ -8,7 +8,8 @@ export declare class TemporalExplorer implements OnModuleInit, OnModuleDestroy, 
     private readonly metadataScanner;
     private options;
     private readonly logger;
-    private worker;
+    get worker(): Worker;
+    private _worker;
     private workerRunPromise;
     constructor(discoveryService: DiscoveryService, metadataAccessor: TemporalMetadataAccessor, metadataScanner: MetadataScanner);
     onModuleInit(): Promise<void>;
