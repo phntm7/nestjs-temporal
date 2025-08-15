@@ -47,11 +47,11 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.1",
     "rxjs": "^7.8.1",
-    "@temporalio/activity": "^1.12.2",
-    "@temporalio/client": "^1.12.2",
-    "@temporalio/common": "^1.12.2",
-    "@temporalio/worker": "^1.12.2",
-    "@temporalio/workflow": "^1.12.2",
+    "@temporalio/activity": "^1.12.1",
+    "@temporalio/client": "^1.12.1",
+    "@temporalio/common": "^1.12.1",
+    "@temporalio/worker": "^1.12.1",
+    "@temporalio/workflow": "^1.12.1",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
@@ -60,10 +60,10 @@
   "peerDependencies": {
     "@nestjs/common": "^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0",
     "@nestjs/core": "^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0",
-    "@temporalio/activity": "^1.12.2",
-    "@temporalio/client": "^1.12.2",
-    "@temporalio/common": "^1.12.2",
-    "@temporalio/worker": "^1.12.2",
-    "@temporalio/workflow": "^1.12.2"
+    "@temporalio/activity": "^1.12.1",
+    "@temporalio/client": "^1.12.1",
+    "@temporalio/common": "^1.12.1",
+    "@temporalio/worker": "^1.12.1",
+    "@temporalio/workflow": "^1.12.1"
   }
 }
